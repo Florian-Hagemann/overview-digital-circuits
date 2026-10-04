@@ -155,7 +155,31 @@ We represent transistors (here NPN-Transistors) using this symbol (Fig \ref{fig:
 \end{figure}
 
 \subsection{Boolean Algebra}
-We've been treating the binary system mostly as "on" and "off" up to this point, but in the beginning we also defined '0' as \emph{false} and "1" as \emph{true}. We can also use mathematical formula to describe our circuits.
+We've been treating the binary system mostly as "on" and "off" up to this point, but in the beginning we also defined '0' as \emph{false} and "1" as \emph{true}. We can use mathematical formula to describe our circuits. For example we can describe the circuit in Figure \ref{fig:simple_two_switches} with the formula $$X_1 \land X_2 = Y_1$$. The $\land$ symbol means logical AND with the upside down $\lor$ meaning logical OR. How they operate is in the name:
+\begin{itemize}
+    \item For $\land$ (AND): \emph{Input One} \textbf{and} \emph{Input Two} need to be true for the output to be true.
+    \item For $\lor$ (OR): \emph{Input One} \textbf{or} \emph{Input Two} needs to be true for the output to be true.
+\end{itemize}
+
+We can also look at the truth tables of both logical operations (remember that we represent \emph{false} with 0 and \emph{true} with 1):
+\begin{table}[htbp]
+    \centering
+    \caption{Truth Tables for AND and OR Operations}
+    \label{tab:truth_tables_and_or}
+    \vspace{-4pt}
+    \begin{tabular}{ccc c ccc}
+        \toprule
+        \multicolumn{3}{c}{AND (\(X_1 \land X_2\))} & & \multicolumn{3}{c}{OR (\(X_1 \lor X_2\))} \\
+        \cmidrule{1-3} \cmidrule{5-7}
+        \(X_1\) & \(X_2\) & \(Y_1\) & & \(X_1\) & \(X_2\) & \(Y_1\) \\
+        \midrule
+        0 & 0 & 0 & & 0 & 0 & 0 \\
+        1 & 0 & 0 & & 1 & 0 & 1 \\
+        0 & 1 & 0 & & 0 & 1 & 1 \\
+        1 & 1 & 1 & & 1 & 1 & 1 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
 
 \section{Introduction to VHDL}
 \subsection{Hardware Description Languages}
