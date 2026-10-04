@@ -3,7 +3,7 @@
 \usepackage{booktabs}
 \usepackage[hidelinks]{hyperref}
 \usepackage[european]{circuitikz}
-\usetikzlibrary{shapes.gates.logic.IEC}
+\usetikzlibrary{positioning, calc}
 
 \usepackage{xcolor}
 \usepackage{listings}
@@ -360,7 +360,7 @@ We really don't want to even bother with logic gates at all, so we invented \tex
 VHDL stands for \emph{VHSIC Hardware Description Language} with VHSIC standing for \emph{Very High Speed Integrated Circuit} (engineers just love acronyms).
 
 \subsection{Basic Syntax}
-Some basic features and syntax is needed before we can start using VHDL to describe our circuits\footnote{This section will be almost the same as chapter two of \emph{Free Range VHDL} \cite{free-range-vhdl} but shortened.} 
+Some basic features and syntax is needed before we can start using VHDL to describe our circuits\footnote{This section will be almost the same as chapter two of \emph{Free Range VHDL} \cite{free-range-vhdl} but shortened. Most direct citations will be marked} 
 \begin{itemize}
     \item VHDL is \textbf{not} case-sensitive
     \item VHDL is \textbf{not} sensitive to white space
@@ -392,10 +392,145 @@ end if;
 An \textbf{identifier} refers to the name given to various items in VHDL. Examples
 of identifiers in higher-level languages include variable names and function
 names. Examples of identifiers in VHDL include variable names, signal
-names and port names \cite{free-range-vhdl}.
+names and port names \cite{free-range-vhdl}. Here are some rules and recommendations:
+\begin{itemize}
+    \item They should be self-describing
+    \item They can be as long as you want
+    \item Identifiers can only contain a combination of letters (A-Z and a-z), digits (0-9) and the underscore character ('\_')
+    \item Identifiers must start with an alphabetic character
+    \item They must not end with an underscore and must not have two consecutive underscores
+    \item Try to be consistent in your naming style
+\end{itemize}
+
+\begin{lstlisting}[caption={Valid identifiers \cite{free-range-vhdl}.}, label={lst:valid_identifiers}]
+data_bus --descriptive name
+WE --classic write enable
+div_flag --real winner
+port_A --provides some info
+in_bus --input bus
+clk --classic clock
+clk_in
+clk_out
+mem_read_data
+\end{lstlisting}
+
+\begin{lstlisting}[caption={Invalid identifiers \cite{free-range-vhdl}.}, label={lst:invalid_identifiers}]
+3Bus_val -- begins with a number
+DDD -- not self commenting
+mid_$num -- illegal character
+last__val-- consec. underscores
+str_val_ -- ends with underscore
+in -- uses VHDL reserved word
+@#$%% -- total garbage
+it_sucks -- try to avoid
+Big_vAlUe-- valid but ugly
+pa -- possibly lacks meaning
+sim-val -- illegal character(dash)
+DDE_SUX -- no comment
+\end{lstlisting}
+
+Some words are \textbf{reserved} in VHDL and cannot be used as identifiers. A partial list appears in Listing \ref{lst:reserved_words}.
+
+\begin{lstlisting}[caption={Reserved Words \cite{free-range-vhdl}.}, label={lst:reserved_words}]
+access after alias all attribute block
+body buffer bus constant exit file
+for function generic group in is
+label loop mod new next null
+of on open out range rem
+return signal shared then to type
+until use variable wait while with
+\end{lstlisting}
+
+VHDL code should always try to be as readable as possible. You should never try to memorize all these rules, when in doubt just check out a reference sheet like this one.
 
 \subsection{Blackbox Diagrams and Entities}
-%etc...
+Most often we don't care about how a design functions on the inside, like our logic gates we can abstract this. We will do this via the \textbf{black box approach} where we treat the circuits as boxes where we cannot look inside. We only know what inputs and what outputs it has. It reduces diagram complexity and allows us to reuse VHDL code (kind of like object-oriented programming in programming language).
+
+VHDL provides the \textbf{entity} construct allowing us the abstract our circuits. The entity declaration describes our black box (Listing \ref{lst:entity_declaration}).
+
+\begin{lstlisting}[caption={The entity declaration in VHDL \cite{free-range-vhdl}.}, label={lst:entity_declaration}]
+entity my_entity is
+port(
+    port_name_1 : in std_logic ;
+    port_name_2 : out std_logic;
+    port_name_3 : inout std_logic ); --do not forget the semicolon
+end my_entity; -- do not forget this semicolon either
+\end{lstlisting}
+
+We introduce a lot of new things in Listing \ref{lst:entity_declaration}. The \texttt{port\_name\_x} is an identifier used to differentiate signals. The keyword after that (e.g. \texttt{in}) specifies the direction of the signal. \texttt{std\_logic} refers to the data type of the signal (\texttt{std\_logic} just means binary like we've used it before).
+
+Drawing a black box diagram can help us write entity declarations with ease.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{circuitikz}
+        % Die Blackbox selbst
+        \draw (0,0) rectangle (2.5,4);
+        \node at (1.25,2) {\texttt{killer\_ckt}};
+
+        % Eingänge links
+        \draw[->] (-0.5,3.5) node[left] {\texttt{life\_in1}} -- (0,3.5);
+        \draw[->] (-0.5,2.5) node[left] {\texttt{life\_in2}} -- (0,2.5);
+        \draw[->] (-0.5,1.5) node[left] {\texttt{ctrl\_a}} -- (0,1.5);
+        \draw[->] (-0.5,0.5) node[left] {\texttt{ctrl\_b}} -- (0,0.5);
+        
+        % Ausgänge rechts
+        \draw[<-] (3,3.5) node[right] {\texttt{life\_in1}} -- (2.5,3.5);
+        \draw[<-] (3,2.5) node[right] {\texttt{life\_in2}} -- (2.5,2.5);
+        \draw[<-] (3,1.5) node[right] {\texttt{ctrl\_a}} -- (2.5,1.5);
+        
+    \end{circuitikz}
+    \caption{Blackbox diagram for \texttt{killer\_ckt}.}
+    \label{fig:blackbox_simple}
+\end{figure}
+
+\begin{lstlisting}[caption={VHDL entity declaration for \texttt{killer\_ckt} \cite{free-range-vhdl}.}, label={lst:killer_ckt_declaration}]
+------------------------------
+-- interface description --
+-- of killer_ckt --
+------------------------------
+entity killer_ckt is
+port (
+    life_in1 : in std_logic;
+    life_in2 : in std_logic;
+    ctrl_a, ctrl_b : in std_logic;
+    kill_a : out std_logic;
+    kill_b, kill_c : out std_logic);
+end killer_ckt;
+\end{lstlisting}
+
+\begin{figure}[htbp]
+    \centering
+    \begin{circuitikz}
+        % Blackbox
+        \draw (0,0) rectangle (2.5,4.5);
+        \node at (1.25,2.25) {\texttt{mux4}};
+
+        % Dateneingänge links (verlängerte Leitungen: -1.2 statt -0.5)
+        \draw[->] (-1.2,3.8) node[left] {\texttt{a\_data}} -- (0,3.8);
+        \draw (-0.7,3.65) -- (-0.5,3.95) node[pos=0.5, above right] {8};
+
+        \draw[->] (-1.2,3.0) node[left] {\texttt{b\_data}} -- (0,3.0);
+        \draw (-0.7,2.85) -- (-0.5,3.15) node[pos=0.5, above right] {8};
+
+        \draw[->] (-1.2,2.2) node[left] {\texttt{c\_data}} -- (0,2.2);
+        \draw (-0.7,2.05) -- (-0.5,2.35) node[pos=0.5, above right] {8};
+
+        \draw[->] (-1.2,1.4) node[left] {\texttt{d\_data}} -- (0,1.4);
+        \draw (-0.7,1.25) -- (-0.5,1.55) node[pos=0.5, above right] {8};
+
+        % Steuereingänge links
+        \draw[->] (-1.2,0.7) node[left] {\texttt{sel1}} -- (0,0.7);
+        \draw[->] (-1.2,0.2) node[left] {\texttt{sel0}} -- (0,0.2);
+
+        % Datenausgang rechts (verlängerte Leitung: 3.7 statt 3.0)
+        \draw[<-] (3.7,2.25) node[right] {\texttt{data\_out}} -- (2.5,2.25);
+        \draw (2.9,2.10) -- (3.1,2.40) node[pos=0.5, above right] {8};
+
+    \end{circuitikz}
+    \caption{Blackbox diagram for \texttt{mux4}.}
+    \label{fig:blackbox_mux4}
+\end{figure}
 
 \section{Combinational Circuits}
 \subsection{Basic Logic Gates}
