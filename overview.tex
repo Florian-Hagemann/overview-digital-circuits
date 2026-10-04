@@ -1,5 +1,6 @@
 \documentclass[a4paper,10pt]{IEEEtran}
 
+\usepackage{booktabs}
 \usepackage[hidelinks]{hyperref}
 \usepackage[european]{circuitikz}
 
@@ -35,8 +36,8 @@ We can now look at a very basic example (Fig. \ref{fig:simple_circuit}) of what 
     \centering
     \begin{circuitikz}
         \draw (0,3) to[ battery1 ] (4,3);
-        \draw (4,3) to[ short, nos ] (4,0);
-        \draw (4,0) to[ led ] (0,0);
+        \draw (4,3) to[ nos, l^={\(X_1\)} ] (4,0);
+        \draw (4,0) to[ led, l={$Y_1$} ] (0,0);
         \draw (0,0) to[ short ] (0,3);
     \end{circuitikz}
     \caption{Simple series circuit with a voltage source, switch, and LED.}
@@ -48,17 +49,113 @@ We only care for the switch and the output state of the circuit though, not what
 \begin{figure}[htbp]
     \centering
     \begin{circuitikz}
-        \node at (0,0) {\(X_1\)};
-        \draw (0.3,0) to [ short, nos ] (2.7,0);
+        \draw (0.3,0) to [ nos , l={$X_1$} ] (2.7,0);
         \node at (3,0) {\(Y_1\)};
     \end{circuitikz}
     \caption{Simplified diagram of Fig. \ref{fig:simple_circuit}.}
     \label{fig:simplest_circuit}
 \end{figure}
 
+So we know if we press $X_1$, $Y_1$ will be set high or to '1'. We can illustrate this using a \emph{truth table} (Tab. \ref{tab:truth_table_simple}):
+
+\begin{table}[htbp]
+    \centering
+    \caption{Truth Table for Fig. \ref{fig:simplest_circuit}}
+    \label{tab:truth_table_simple}
+    \vspace{-4pt}
+    \begin{tabular}{cc}
+        \toprule
+        $X_1$ & $Y_1$ \\
+        \midrule
+        0 & 0 \\
+        1 & 1 \\ 
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+With a truth table we can read what our output will be for any input. At this point in time this is overkill, but it gets more useful the more switches we add. For example, we can add another switch in series (Fig. \ref{fig:simple_two_switches}).
+
+\begin{figure}[htbp]
+    \centering
+    \begin{circuitikz}
+        \draw (0,0) to [ nos , l={$X_1$} ] (1.2,0);
+        \draw (1.2,0) to [ nos , l={$X_2$} ] (2.5,0);
+        \node at (3,0) {\(Y_1\)};
+    \end{circuitikz}
+    \caption{Two switches in series}
+    \label{fig:simple_two_switches}
+\end{figure}
+
+\begin{table}[htbp]
+    \centering
+    \caption{Truth Table for Fig. \ref{fig:simple_two_switches}}
+    \label{tab:truth_table_simple_two_switch}
+    \vspace{-4pt}
+    \begin{tabular}{ccc}
+        \toprule
+        $X_1$ & $X_2$ & $Y_1$ \\
+        \midrule
+        0 & 0 & 0 \\
+        1 & 0 & 0 \\
+        0 & 1 & 0 \\
+        1 & 1 & 1 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Now if none or only one switch is turned on, the output will stay low. But if both switches are turned on, the output will be high. So we can check a condition just using switches and electricity. But we might also notice that if we want to do something more complex, we will need more and more switches which we have to flip manually. 
+
 \subsection{Electronic Switches: Transistors}
-\subsection{Making Computers Think}
-\subsection{Examples}
+Luckily there is an invention that solves the issue of us having to flip switches by hand. The \textbf{transistor} is a semiconductor device used (among other uses) to switch electronical signals \footnote{We will not talk about how a transistor works. See \url{https://en.wikipedia.org/wiki/Transistor} or search the web for more information.}. Transistors usually have three terminals a \emph{source} (or \emph{collector}), \emph{gate} (or \emph{base}), and \emph{drain} (or \emph{emitter}). You might have heard a water analogy used to explain electricity before and we can use it again to understand the transistor. The water flow comes from the source, applying a voltage to the gate opens it, and the water drains through the drain. If we don't open the gate, no water can flow and the drain will be dry. There are many types of transistors, but we can't talk about all of them, but in general they do the same thing.
+
+We can now replace our switches in Figure \ref{fig:simple_two_switches} with transistors, we will look at the circuit as a whole though (Fig. \ref{fig:npn_transistor_switch}). Now we only need to apply a voltage to $X_1$ and $X_2$ instead of switching them. While at this scale it will still be the same amount of work for us to switch the voltages, the advantage of this design is that we can now plug the output of these transistors into another transistor to switch that automatically.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{circuitikz}
+        % Spannungsquelle links
+        \draw (0,4) to[ battery1 ] (0,0);
+        \draw (0,4) -- (4,4);
+        
+        % LED ganz oben rechts
+        \draw (4,4) to[ led, l={\(Y_1\)} ] (4,3);
+        
+        % Oberer Transistor Q2 (Eingang X2)
+        \draw (4,2.25) node[npn] (Q2) {};
+        \draw (4,3) -- (Q2.collector);
+        \draw (Q2.base) to[ short, -o ] (2.8,2.25) node[left] {\(X_2\)};
+        
+        % Unterer Transistor Q1 (Eingang X1)
+        \draw (4,0.75) node[npn] (Q1) {};
+        \draw (Q2.emitter) -- (Q1.collector);
+        \draw (Q1.base) to[ short, -o ] (2.8,0.75) node[left] {\(X_1\)};
+        
+        % Rückleiter zur Masse / Batterie
+        \draw (Q1.emitter) -- (4,0) -- (0,0);
+    \end{circuitikz}
+    \caption{Simple transistor switch circuit controlling an LED output (\(Y_1\)) via input signals \(X_1\) and \(X_2\).}
+    \label{fig:npn_transistor_switch}
+\end{figure}
+
+We represent transistors (here NPN-Transistors) using this symbol (Fig \ref{fig:npn_transistor}).
+
+\begin{figure}[htbp]
+    \centering
+    \begin{circuitikz}
+        
+        % Oberer Transistor Q2 (Eingang X2)
+        \draw (1,1) node[npn] (Q2) {};
+        \draw (Q2.collector) to[ short, -o ] (1,2) node[left] {Collector};
+        \draw (Q2.base) to[ short, -o ] (0,1) node[left] {Base};
+        \draw (Q2.emitter) to[ short, -o ] (1,0) node[left] {Emitter};
+        
+    \end{circuitikz}
+    \caption{NPN-Transistor}
+    \label{fig:npn_transistor}
+\end{figure}
+
+\subsection{Boolean Algebra}
+We've been treating the binary system mostly as "on" and "off" up to this point, but in the beginning we also defined '0' as \emph{false} and "1" as \emph{true}. We can also use mathematical formula to describe our circuits.
 
 \section{Introduction to VHDL}
 \subsection{Hardware Description Languages}
@@ -76,7 +173,6 @@ We only care for the switch and the output state of the circuit though, not what
 \subsection{Mealy Machines}
 
 
-\nocite{*}
 \bibliographystyle{IEEEtran}
 \bibliography{sources}
 
