@@ -1,10 +1,11 @@
 \documentclass[a4paper,10pt]{IEEEtran}
 
+\usepackage[hidelinks]{hyperref}
+\usepackage[european]{circuitikz}
+
 \title{Digital Circuits and VHDL -- Overview and Examples}
 \author{Florian Hagemann\thanks{Thanks to \dots}}
 \date{\today}
-
-
 
 
 %======== Begin Document ==============
@@ -24,11 +25,38 @@ Here be an abstract\dots
 \section{Introduction}
 
 \section{Digital Circuits}
-\IEEEPARstart{W}{hat} is a \emph{digital circuit}? To understand this, we need to examine each word separetely. A \emph{circuit} is a closed loop that allows electricity to flow. Typically it consists of a power source and some device (e.g. a motor, LED, etc.) that uses that electricity. A circuit needs to be closed in order for the electricity to flow through it \cite{wiktionary_circuit}. \emph{Digital} comes from the the Latin \textit{"digitalis"} meaning finger or toe. Digital can mean "something to do with digits (fingers or toes)" but can also mean the "property of representing values as discrete, often binary, numbers rather than a continuous spectrum" \cite{wiktionary_digital}.
+\IEEEPARstart{W}{hat} is a \emph{digital circuit}? To understand this, we need to examine each word separately. A \emph{circuit} is a closed loop that allows electricity to flow. Typically it consists of a power source and some device (e.g., a motor, LED, etc.) that uses that electricity. A circuit needs to be closed in order for the electricity to flow through it \cite{wiktionary_circuit}. \emph{Digital} comes from the Latin \textit{``digitalis''} meaning finger or toe. Digital can mean ``something to do with digits (fingers or toes)'' but can also mean the ``property of representing values as discrete, often binary, numbers rather than a continuous spectrum'' \cite{wiktionary_digital}.
 
-A \textbf{digital circuit}
+A \textbf{digital circuit} is a closed loop that electricity can flow through that uses discrete values. Most often these values are '1' (on, high, or true) and '0' (off, low, or false) \footnote{You can use more than two values but binary is most common. See \protect\url{https://en.wikipedia.org/wiki/Ternary_computer}}. This system of using two values is called \emph{binary}.
 
-\subsection{Electronical Switches: Transistors}
+We can now look at a very basic example (Fig. \ref{fig:simple_circuit}) of what we can do by defining binary values. When the switch is closed, electricity can flow through the LED and it will light up; if it is not closed, no electricity will flow.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{circuitikz}
+        \draw (0,3) to[ battery1 ] (4,3);
+        \draw (4,3) to[ short, nos ] (4,0);
+        \draw (4,0) to[ led ] (0,0);
+        \draw (0,0) to[ short ] (0,3);
+    \end{circuitikz}
+    \caption{Simple series circuit with a voltage source, switch, and LED.}
+    \label{fig:simple_circuit}
+\end{figure}
+
+We only care for the switch and the output state of the circuit though, not what the power source is or what the output is connected to, so we can simplify our diagram (Fig. \ref{fig:simplest_circuit} ).
+
+\begin{figure}[htbp]
+    \centering
+    \begin{circuitikz}
+        \node at (0,0) {\(X_1\)};
+        \draw (0.3,0) to [ short, nos ] (2.7,0);
+        \node at (3,0) {\(Y_1\)};
+    \end{circuitikz}
+    \caption{Simplified diagram of Fig. \ref{fig:simple_circuit}.}
+    \label{fig:simplest_circuit}
+\end{figure}
+
+\subsection{Electronic Switches: Transistors}
 \subsection{Making Computers Think}
 \subsection{Examples}
 
@@ -38,8 +66,8 @@ A \textbf{digital circuit}
 \subsection{Blackbox Diagrams and Entities}
 %etc...
 
-\section{Combinatorical Circuits}
-\subsection{}
+\section{Combinational Circuits}
+\subsection{Basic Logic Gates}
 
 \section{Sequential Circuits}
 
