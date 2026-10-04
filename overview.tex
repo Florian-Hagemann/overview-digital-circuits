@@ -3,6 +3,9 @@
 \usepackage{booktabs}
 \usepackage[hidelinks]{hyperref}
 \usepackage[european]{circuitikz}
+\usetikzlibrary{shapes.gates.logic.IEC}
+
+\usepackage{lipsum}
 
 \title{Digital Circuits and VHDL -- Overview and Examples}
 \author{Florian Hagemann\thanks{Thanks to \dots}}
@@ -214,9 +217,118 @@ We want to use these logical operation a lot without drawing a bunch of transist
         % Connect and label output
         \draw (myand.out) -- ++(0.5,0) node[right] {\(Y_1\)};
     \end{circuitikz}
-    \caption{Basic AND gate with European notation.}
+    \caption{AND gate with European notation.}
     \label{fig:and_gate}
 \end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \begin{circuitikz}
+        % Draw an AND gate centered at (2,0)
+        \draw (2,0) node[or port] (myor) {};
+        
+        % Connect and label inputs
+        \draw (myor.in 1) -- ++(-0.5,0) node[left] {\(X_1\)};
+        \draw (myor.in 2) -- ++(-0.5,0) node[left] {\(X_2\)};
+        
+        % Connect and label output
+        \draw (myor.out) -- ++(0.5,0) node[right] {\(Y_1\)};
+    \end{circuitikz}
+    \caption{OR gate with European notation.}
+    \label{fig:or_gate}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \begin{circuitikz}
+        % Draw a NOT gate centered at (2,0)
+        \draw (2,0) node[not port] (mynot) {};
+        
+        % Connect and label input
+        \draw (mynot.in 1) -- ++(-0.5,0) node[left] {\(X_1\)};
+        
+        % Connect and label output
+        \draw (mynot.out) -- ++(0.5,0) node[right] {\(Y_1\)};
+    \end{circuitikz}
+    \caption{NOT gate with European notation.}
+    \label{fig:not_gate}
+\end{figure}
+
+These logic gates are very simple and can be used to build a lot of other useful circuits. For example we can build a circuit that only outputs a '1' if only one of the inputs is '1' (Fig. \ref{fig:internal_XOR_gate} and tab. \ref{tab:truth_table_xor}). This kind of circuit is called an XOR gate (XOR being short for exclusive or).
+
+\begin{table}[htbp]
+    \centering
+    \caption{Truth Table for XOR}
+    \label{tab:truth_table_xor}
+    \vspace{-4pt}
+    \begin{tabular}{ccc}
+        \toprule
+        $X_1$ & $X_2$ & $Y_1$ \\
+        \midrule
+        0 & 0 & 0 \\
+        1 & 0 & 1 \\
+        0 & 1 & 1 \\
+        1 & 1 & 0 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\begin{figure}[htbp]
+    \centering
+    \begin{circuitikz}[scale=0.85, transform shape]
+        % Gates placement
+        \draw (0, 0.7) node[not port] (not1) {};
+        \draw (0,-0.7) node[not port] (not2) {};
+        
+        \draw (2.5, 1.25) node[and port] (and1) {};
+        \draw (2.5,-1.25) node[and port] (and2) {};
+        
+        \draw (5.5, 0) node[or port] (or1) {};
+
+        % Primary Input Lines
+        \draw (not1.in 1) -- ++(-1.0,0) coordinate (inX1) node[left] {\(X_1\)};
+        \draw (not2.in 1) -- ++(-1.0,0) coordinate (inX2) node[left] {\(X_2\)};
+
+        % Interconnections for XOR logic
+        % Upper branch: X1 uninverted -> AND1 pin 1, NOT1 output -> AND2 pin 1
+        \fill (inX1) ++(0.4,0) circle (2pt) coordinate (dotX1);
+        \draw (dotX1) |- (and1.in 1);
+        \draw (not1.out) -- (and2.in 1);
+
+        % Lower branch: X2 uninverted -> AND2 pin 2, NOT2 output -> AND1 pin 2
+        \fill (inX2) ++(0.4,0) circle (2pt) coordinate (dotX2);
+        \draw (dotX2) |- (and2.in 2);
+        \draw (not2.out) -- (and1.in 2);
+
+        % Connect AND gates to OR gate
+        \draw (and1.out) |- (or1.in 1);
+        \draw (and2.out) |- (or1.in 2);
+
+        % Output
+        \draw (or1.out) -- ++(0.5,0) node[right] {\(Y_1\)};
+    \end{circuitikz}
+    \caption{XOR gate constructed from NOT, AND, and OR gates.}
+    \label{fig:internal_XOR_gate}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \begin{circuitikz}
+        % Draw an AND gate centered at (2,0)
+        \draw (2,0) node[xor port] (myxor) {};
+        
+        % Connect and label inputs
+        \draw (myxor.in 1) -- ++(-0.5,0) node[left] {\(X_1\)};
+        \draw (myxor.in 2) -- ++(-0.5,0) node[left] {\(X_2\)};
+        
+        % Connect and label output
+        \draw (myxor.out) -- ++(0.5,0) node[right] {\(Y_1\)};
+    \end{circuitikz}
+    \caption{XOR gate with European notation.}
+    \label{fig:xor_gate}
+\end{figure}
+
+The main point of logic gates is that we can abstract the electronical components away to only focus on the logic.
 
 \section{Introduction to VHDL}
 \subsection{Hardware Description Languages}
