@@ -5,6 +5,28 @@
 \usepackage[european]{circuitikz}
 \usetikzlibrary{shapes.gates.logic.IEC}
 
+\usepackage{xcolor}
+\usepackage{listings}
+
+% Design-Einstellungen für den VHDL-Code
+\lstdefinestyle{vhdlstyle}{
+    language=VHDL,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{gray}\itshape,
+    stringstyle=\color{purple},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=8pt,
+    showstringspaces=false,
+    breaklines=true,
+    frame=single,
+    captionpos=b
+}
+
+\lstset{style=vhdlstyle}
+
 \usepackage{lipsum}
 
 \title{Digital Circuits and VHDL -- Overview and Examples}
@@ -184,7 +206,7 @@ We can also look at the truth tables of both logical operations (remember that w
     \end{tabular}
 \end{table}
 
-Another operator is \emph{negation}, which is written with the $\neg$ symbol, but can also be written like this $$\neg X = \overline{X}$$, which you would read as \emph{"not $X$"} (Tab. \ref{tab:truth_table_not}). 
+Another operator is \emph{negation}, which is written with the $\neg$ symbol, but can also be written like this $$\neg X = \overline{X}$$, which you would read as \emph{"not $X$"} (Tab. \ref{tab:truth_table_not})  \footnote{Check out K-Maps to simplify your boolean algebra}. 
 
 \begin{table}[htbp]
     \centering
@@ -328,11 +350,50 @@ These logic gates are very simple and can be used to build a lot of other useful
     \label{fig:xor_gate}
 \end{figure}
 
-The main point of logic gates is that we can abstract the electronical components away to only focus on the logic.
+The main point of logic gates is that we can abstract the electronical components away to only focus on the logic, but we always need to remember that everything we are doing is just chaining transistor together.
 
 \section{Introduction to VHDL}
 \subsection{Hardware Description Languages}
+A question you might be asking yourself is: How can we build digital circuits? There are many ways of building digital circuits. For example, we could use a breadboard and physically connect transistors, but this gets impossible when you want to build a computer and need billions of transistors that are only a few nanometers big. 
+
+We really don't want to even bother with logic gates at all, so we invented \textbf{Hardware Description Languages} (HDL) to make digital circuit design easier. You can describe a circuit using an HDL and a \emph{synthesizer} produces the optimized gates for you. As we cover more complex circuits the need for an HDL will get clearer, but we need to start out with the basics to understand how to use an HDL. We will be using \emph{VHDL} as it is one of the two leading HDLs alongside \emph{SystemVerilog}\footnote{We won't cover how to install VHDL or all of it quirks. See \emph{FREE RANGE VHDL} at \url{https://github.com/fabriziotappero/Free-Range-VHDL-book} for very detailed information}. We will use \emph{GHDL}\footnote{GHDL: \url{https://ghdl.github.io/ghdl/}} as our compiler and simulator, and \emph{GTKWave}\footnote{GTKWave: \url{https://gtkwave.github.io/gtkwave/}} as our waveform viewer.
+VHDL stands for \emph{VHSIC Hardware Description Language} with VHSIC standing for \emph{Very High Speed Integrated Circuit} (engineers just love acronyms).
+
 \subsection{Basic Syntax}
+Some basic features and syntax is needed before we can start using VHDL to describe our circuits\footnote{This section will be almost the same as chapter two of \emph{Free Range VHDL} \cite{free-range-vhdl} but shortened.} 
+\begin{itemize}
+    \item VHDL is \textbf{not} case-sensitive
+    \item VHDL is \textbf{not} sensitive to white space
+    \item \textbf{Comments} begin with "{-}{-}" (two consecutive dashes)
+    \item Use of parentheses is recommended to improve readabilty (For example, in Listing \ref{lst:parentheses_readabilty} both statements are equivalent)
+    \item Every statement must be terminated with a semicolon
+\end{itemize}
+
+\begin{lstlisting}[caption={Example of parentheses that can improve clarity \cite{free-range-vhdl}.}, label={lst:parentheses_readabilty}]
+if x = '0' and y = '0' or z = '1' then
+    blah; -- some useful statement
+    blah; -- some useful statement
+end if;
+if ( ((x = '0') and (y = '0')) or (z = '1') ) then
+    blah; -- some useful statement
+    blah; -- some useful statement
+end if;
+\end{lstlisting}
+
+\textbf{\texttt{if}, \texttt{case}, and \texttt{loop} statements} have some rules you need to remember to save yourself time:
+\begin{itemize}
+    \item Every \texttt{if} statement has a corresponding \texttt{then} component
+    \item Each \texttt{if} statement is terminated with an \texttt{end if;}
+    \item If you need an \texttt{else if} construct, the VHDL version is \texttt{elsif}
+    \item Each \texttt{case} statement is terminated with an \texttt{end case;}
+    \item Each \texttt{loop} statement has a corresponding \texttt{end loop;} statement
+\end{itemize}
+
+An \textbf{identifier} refers to the name given to various items in VHDL. Examples
+of identifiers in higher-level languages include variable names and function
+names. Examples of identifiers in VHDL include variable names, signal
+names and port names \cite{free-range-vhdl}.
+
 \subsection{Blackbox Diagrams and Entities}
 %etc...
 
