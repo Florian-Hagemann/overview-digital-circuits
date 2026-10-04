@@ -157,8 +157,8 @@ We represent transistors (here NPN-Transistors) using this symbol (Fig \ref{fig:
 \subsection{Boolean Algebra}
 We've been treating the binary system mostly as "on" and "off" up to this point, but in the beginning we also defined '0' as \emph{false} and "1" as \emph{true}. We can use mathematical formula to describe our circuits. For example we can describe the circuit in Figure \ref{fig:simple_two_switches} with the formula $$X_1 \land X_2 = Y_1$$. The $\land$ symbol means logical AND with the upside down $\lor$ meaning logical OR. How they operate is in the name:
 \begin{itemize}
-    \item For $\land$ (AND): \emph{Input One} \textbf{and} \emph{Input Two} need to be true for the output to be true.
-    \item For $\lor$ (OR): \emph{Input One} \textbf{or} \emph{Input Two} needs to be true for the output to be true.
+    \item For $\land$ or $\cdot$ (AND): \emph{Input One} \textbf{and} \emph{Input Two} need to be true for the output to be true.
+    \item For $\lor$ or $+$ (OR): \emph{Input One} \textbf{or} \emph{Input Two} needs to be true for the output to be true.
 \end{itemize}
 
 We can also look at the truth tables of both logical operations (remember that we represent \emph{false} with 0 and \emph{true} with 1):
@@ -180,6 +180,8 @@ We can also look at the truth tables of both logical operations (remember that w
         \bottomrule
     \end{tabular}
 \end{table}
+
+Another operator is \emph{negation}, which is written with the $\neg$ symbol, but can also be written like this $$\neg X = \overline{X}$$
 
 \section{Introduction to VHDL}
 \subsection{Hardware Description Languages}
