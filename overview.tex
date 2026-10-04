@@ -161,7 +161,7 @@ We've been treating the binary system mostly as "on" and "off" up to this point,
     \item For $\lor$ or $+$ (OR): \emph{Input One} \textbf{or} \emph{Input Two} needs to be true for the output to be true.
 \end{itemize}
 
-We can also look at the truth tables of both logical operations (remember that we represent \emph{false} with 0 and \emph{true} with 1):
+We can also look at the truth tables of both logical operations (remember that we represent \emph{false} with 0 and \emph{true} with 1).
 \begin{table}[htbp]
     \centering
     \caption{Truth Tables for AND and OR Operations}
@@ -181,7 +181,42 @@ We can also look at the truth tables of both logical operations (remember that w
     \end{tabular}
 \end{table}
 
-Another operator is \emph{negation}, which is written with the $\neg$ symbol, but can also be written like this $$\neg X = \overline{X}$$
+Another operator is \emph{negation}, which is written with the $\neg$ symbol, but can also be written like this $$\neg X = \overline{X}$$, which you would read as \emph{"not $X$"} (Tab. \ref{tab:truth_table_not}). 
+
+\begin{table}[htbp]
+    \centering
+    \caption{Truth Table for NOT}
+    \label{tab:truth_table_not}
+    \vspace{-4pt}
+    \begin{tabular}{cc}
+        \toprule
+        $X$ & $\overline{X}$ \\
+        \midrule
+        0 & 1 \\
+        1 & 0 \\ 
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Logic Gates}
+We want to use these logical operation a lot without drawing a bunch of transistors. That is why there are standard ways of drawing so called \textbf{logic gates}. These can be defined as "a device that performs a Boolean function, a logical operation performed on one or more binary inputs that produces a single binary output" \cite{wikipedia_logic_gates}. We have already unknowingly used an AND gate in Figure \ref{fig:npn_transistor_switch}. We can redraw our diagram to use a logic gate notation to save ourselves time and space, while making what the circuit does more clear (Fig. \ref{fig:and_gate})\footnote{There are several different notation styles for logic gates. We will use the European notation. See \url{https://jlcpcb.com/blog/logic-gate-symbols-guide} for an overview of european and ANSI/IEEE equivalents}.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{circuitikz}
+        % Draw an AND gate centered at (2,0)
+        \draw (2,0) node[and port] (myand) {};
+        
+        % Connect and label inputs
+        \draw (myand.in 1) -- ++(-0.5,0) node[left] {\(X_1\)};
+        \draw (myand.in 2) -- ++(-0.5,0) node[left] {\(X_2\)};
+        
+        % Connect and label output
+        \draw (myand.out) -- ++(0.5,0) node[right] {\(Y_1\)};
+    \end{circuitikz}
+    \caption{Basic AND gate with European notation.}
+    \label{fig:and_gate}
+\end{figure}
 
 \section{Introduction to VHDL}
 \subsection{Hardware Description Languages}
