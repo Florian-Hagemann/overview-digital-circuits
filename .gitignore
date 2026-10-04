@@ -6,3 +6,7 @@
 *.log
 *.synctex.gz
 *.toc
+*.acn
+*.glo
+*.ist
+
