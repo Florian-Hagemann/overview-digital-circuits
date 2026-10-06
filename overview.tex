@@ -8,26 +8,40 @@
 \usepackage{xcolor}
 \usepackage{listings}
 
-% Design-Einstellungen für den VHDL-Code
+% Farbdefinitionen für ein modernes, lesbares Farbschema
+\definecolor{vhdlKeyword}{RGB}{0, 102, 204}    % Kräftiges Blau
+\definecolor{vhdlComment}{RGB}{108, 117, 125}  % Dezent graues Silbergrau
+\definecolor{vhdlString}{RGB}{192, 57, 43}     % Elegantes Dunkelrot
+\definecolor{vhdlBg}{RGB}{248, 249, 250}       % Sehr heller grauer Hintergrund
+\definecolor{vhdlBorder}{RGB}{222, 226, 230}   % Feine Randlinie
+
+% Design-Einstellungen für VHDL (Optimiert für zweispaltiges Layout)
 \lstdefinestyle{vhdlstyle}{
     language=VHDL,
-    basicstyle=\ttfamily\small,
-    keywordstyle=\color{blue}\bfseries,
-    commentstyle=\color{gray}\itshape,
-    stringstyle=\color{purple},
+    basicstyle=\ttfamily\footnotesize, % Leicht kleiner, damit längere Zeilen besser passen
+    keywordstyle=\color{vhdlKeyword}\bfseries,
+    commentstyle=\color{vhdlComment}\itshape,
+    stringstyle=\color{vhdlString},
     numbers=left,
-    numberstyle=\tiny\color{gray},
+    numberstyle=\tiny\color{vhdlComment},
     stepnumber=1,
-    numbersep=8pt,
+    numbersep=6pt,                % Verringert den Abstand zwischen Nummern und Code
     showstringspaces=false,
     breaklines=true,
+    breakatwhitespace=true,
+    % Rahmen- und Hintergrund-Styling
+    backgroundcolor=\color{vhdlBg},
     frame=single,
-    captionpos=b
+    frameround=tttt,              % Abgerundete Ecken
+    rulecolor=\color{vhdlBorder},
+    framesep=3pt,                 % Verringertes Innenpolster gegen Spaltenüberschneidung
+    xleftmargin=12pt,             % Rückt den linken Rand ein (Platz für Zeilennummern)
+    xrightmargin=3pt,             % Hält den rechten Rand exakt innerhalb der Spalte
+    captionpos=b,
+    tabsize=2
 }
 
 \lstset{style=vhdlstyle}
-
-\usepackage{lipsum}
 
 \title{Digital Circuits and VHDL -- Overview and Examples}
 \author{Florian Hagemann\thanks{Thanks to \dots}}
@@ -499,6 +513,25 @@ port (
 end killer_ckt;
 \end{lstlisting}
 
+In Listing \ref{lst:killer_ckt_declaration} you can see that we use a new syntax of \texttt{signal\_a, signal\_b : out std\_logic;} to create two signals in just one line. Keep in mind that this should be used to make the code more readable, not to make it unreadably compact.
+
+\begin{lstlisting}[caption={VHDL entity declaration for \texttt{mux4} \cite{free-range-vhdl}.}, label={lst:mux4_declaration}]
+----------------------------------------------
+-- Unlike the other examples, this is actually an interface
+-- for a MUX that selects one of four bus lines for the output.
+----------------------------------------------
+entity mux4 is
+port ( a_data : in std_logic_vector(0 to 7);
+    b_data : in std_logic_vector(0 to 7);
+    c_data : in std_logic_vector(0 to 7);
+    d_data : in std_logic_vector(0 to 7);
+    sel1,sel0 : in std_logic;
+    data_out : out std_logic_vector(7 downto 0));
+end mux4;
+\end{lstlisting}
+
+In Listing \ref{lst:mux4_declaration} we use a something called a \textbf{bundle} to group signals together. We accomplish this by using \texttt{std\_logic\_vector} instead of \texttt{std\_logic}. This is shown in Fig \ref{fig:blackbox_mux4} with a dash through the signal with the number of signals it contains written above.
+
 \begin{figure}[htbp]
     \centering
     \begin{circuitikz}
@@ -531,6 +564,44 @@ end killer_ckt;
     \caption{Blackbox diagram for \texttt{mux4}.}
     \label{fig:blackbox_mux4}
 \end{figure}
+
+Lastly we need to talk about \textbf{VHDL standard libraries}. Even \texttt{std\_logic} is not included automatically and needs to be imported. In Listing \ref{lst:standard_libaries} you can see the standard libraries and how to import them.
+
+\begin{lstlisting}[caption={Example on VHDL Standard Libraries \cite{free-range-vhdl}.}, label={lst:standard_libaries}]
+-- library declaration
+library IEEE;
+use IEEE.std_logic_1164.all; -- basic IEEE library
+use IEEE.numeric_std.all; -- IEEE library for the unsigned type and
+-- various arithmetic operators
+
+-- WARNING: in general try NOT to use the following libraries
+-- because they are not IEEE standard libraries
+-- use IEEE.std_logic_arith.all;
+-- use IEEE.std_logic_unsigned.all;
+-- use IEEE.std_logic_signed
+
+-- entity
+entity my_ent is
+port ( A,B,C : in std_logic;
+    F : out std_logic);
+end my_ent;
+-- architecture
+architecture my_arch of my_ent is
+    signal v1,v2 : std_logic_vector (3 downto 0);
+    signal u1 : unsigned (3 downto 0);
+    signal i1 : integer;
+begin
+    u1 <= "1101";
+    i1 <= 13;
+    v1 <= std_logic_vector(u1); -- = "1101"
+    v2 <= std_logic_vector(to_unsigned(i1, v2'length)); -- = "1101"
+
+    -- "4" could be used instead of "v2'length", but the "length"
+    -- attribute makes life easier if you want to change the size of v2
+
+    F <= NOT (A AND B AND C);
+end my_arch;
+\end{lstlisting}
 
 \section{Combinational Circuits}
 \subsection{Basic Logic Gates}
