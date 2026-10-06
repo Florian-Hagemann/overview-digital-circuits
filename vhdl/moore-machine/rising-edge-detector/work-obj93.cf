@@ -1,0 +1,7 @@
+v 4
+file . "tb_rising_edge_detector.vhd" "d26d9ba5e837d89ccdd7ef46d114e83aec52e4d0" "20261006190739.702":
+  entity tb_rising_edge_detector at 1( 0) + 0 on 13;
+  architecture sim of tb_rising_edge_detector at 7( 115) + 0 on 14;
+file . "rising_edge_detector.vhd" "ca7c2c10ee6d21a2ef96c19ccd7dc68a3ba85929" "20261006190739.701":
+  entity rising_edge_detector at 1( 0) + 0 on 11;
+  architecture arch_rising_edge_detector of rising_edge_detector at 17( 419) + 0 on 12;
