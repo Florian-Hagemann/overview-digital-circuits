@@ -46,7 +46,7 @@
 \lstset{style=vhdlstyle}
 
 \title{Digital Circuits and VHDL -- Overview and Examples}
-\author{Florian Hagemann\thanks{Thanks to \dots}}
+\author{Florian Hagemann}
 \date{\today}
 
 
@@ -56,7 +56,7 @@
 \maketitle
 
 \begin{abstract}
-Here be an abstract\dots
+Summary on digital circuits and VHDL. Starting with basic switches and then transitioning to transistors, logic gates, boolean algebra. Then we look at VHDL syntax basics and move from combinatorical circuits and basic sequential circuits to moore and mealy finite state machines.
 \end{abstract}
 
 \tableofcontents
@@ -64,9 +64,7 @@ Here be an abstract\dots
 
 %=========== Content ===================
 
-\section{Introduction}
-
-\section{Digital Circuits}
+\section{Introduction to Digital Circuits}
 \IEEEPARstart{W}{hat} is a \emph{digital circuit}? To understand this, we need to examine each word separately. A \emph{circuit} is a closed loop that allows electricity to flow. Typically it consists of a power source and some device (e.g., a motor, LED, etc.) that uses that electricity. A circuit needs to be closed in order for the electricity to flow through it \cite{wiktionary_circuit}. \emph{Digital} comes from the Latin \textit{``digitalis''} meaning finger or toe. Digital can mean ``something to do with digits (fingers or toes)'' but can also mean the ``property of representing values as discrete, often binary, numbers rather than a continuous spectrum'' \cite{wiktionary_digital}.
 
 A \textbf{digital circuit} is a closed loop that electricity can flow through that uses discrete values. Most often these values are '1' (on, high, or true) and '0' (off, low, or false) \footnote{You can use more than two values but binary is most common. See \protect\url{https://en.wikipedia.org/wiki/Ternary_computer}}. This system of using two values is called \emph{binary}.
@@ -147,7 +145,7 @@ With a truth table we can read what our output will be for any input. At this po
 Now if none or only one switch is turned on, the output will stay low. But if both switches are turned on, the output will be high. So we can check a condition just using switches and electricity. But we might also notice that if we want to do something more complex, we will need more and more switches which we have to flip manually. 
 
 \subsection{Electronic Switches: Transistors}
-Luckily there is an invention that solves the issue of us having to flip switches by hand. The \textbf{transistor} is a semiconductor device used (among other uses) to switch electronical signals \footnote{We will not talk about how a transistor works. See \url{https://en.wikipedia.org/wiki/Transistor} or search the web for more information.}. Transistors usually have three terminals a \emph{source} (or \emph{collector}), \emph{gate} (or \emph{base}), and \emph{drain} (or \emph{emitter}). You might have heard a water analogy used to explain electricity before and we can use it again to understand the transistor. The water flow comes from the source, applying a voltage to the gate opens it, and the water drains through the drain. If we don't open the gate, no water can flow and the drain will be dry. There are many types of transistors, but we can't talk about all of them, but in general they do the same thing.
+Luckily there is an invention that solves the issue of us having to flip switches by hand. The \textbf{transistor} is a semiconductor device used (among other uses) to switch electronical signals \footnote{We will not talk about how a transistor works. See \url{https://en.wikipedia.org/wiki/Transistor} or search the web for more information.}. Transistors usually have three terminals a \emph{collector}, \emph{base}, and \emph{emitter}. You might have heard a water analogy used to explain electricity before and we can use it again to understand the transistor. The water flow comes from the source, applying a voltage to the gate opens it, and the water drains through the drain. If we don't open the gate, no water can flow and the drain will be dry. There are many types of transistors, but we can't talk about all of them, but in general they do the same thing.
 
 We can now replace our switches in Figure \ref{fig:simple_two_switches} with transistors, we will look at the circuit as a whole though (Fig. \ref{fig:npn_transistor_switch}). Now we only need to apply a voltage to $X_1$ and $X_2$ instead of switching them. While at this scale it will still be the same amount of work for us to switch the voltages, the advantage of this design is that we can now plug the output of these transistors into another transistor to switch that automatically.
 
@@ -606,9 +604,10 @@ end my_arch;
 \end{lstlisting}
 
 \section{Combinational Circuits}
-\subsection{Basic Logic Gates}
+Combinational logic circuits are circuits where the output depends solely on the current combination of inputs (e.g., basic logic gates, multiplexers, and adders).
 
 \section{Sequential Circuits}
+Unlike combinational circuits, sequential circuits have memory elements (e.g., flip-flops). Their outputs depend on both current inputs and previous states.
 
 \section{Finite State Machines (FSM)}
 A \textbf{Finite State Machine} is a type of machine or automaton that has a finite set of states, which change based on the input and current state of the machine. It can be defined by a set of states, a next-state function, and an output function. The states need to be stored in flip-flops.
@@ -763,7 +762,9 @@ A \textbf{Mealy Machine} is a FSM whose output not only depends on its state, bu
     \label{fig:edge_detector_moore_wave}
 \end{figure}
 
-\begin{lstlisting}[caption={Example VHDL solution for Figure \ref{fig:mealy_edge}}, label={lst:rising_edge_detector}]
+We can see that we now have a faster reaction to the input. In Listing \ref{lst:mealy_rising_edge_detector} there is an example of how you could implement Figure \ref{fig:mealy_edge} in VHDL.
+
+\begin{lstlisting}[caption={Example VHDL solution for Figure \ref{fig:mealy_edge}}, label={lst:mealy_rising_edge_detector}]
 library IEEE;
 use IEEE.std_logic_1164.all;
 
